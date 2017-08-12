@@ -1,12 +1,17 @@
 (function(){
   
-  function handler (data) {
-    var datatable = new Datatable({
-      selector: '#dashboard',
-      paging: true,
-      sort: true
-    })
-    datatable.init(data)
+  function callback (data) {
+    new Datatable({
+      selector: '#carTable',
+      style: 'basic',
+      show: true,
+      sort: true,
+      search: true,
+      pagination: true,
+      responsive: true,
+      editable: true,
+      data: data
+    }).init()
   }
 
   window.onload = function () {
@@ -22,7 +27,7 @@
       dataType: 'json',
       async: true,
       success: function (data) {
-        handler(data)
+        callback(data)
       },
       error: function (err) {
         console.error(err)

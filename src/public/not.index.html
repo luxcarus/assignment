@@ -10,33 +10,33 @@
   <body>
     <h5>Dashboard</h1>
     <div class="wrapper">
-      <div id="dashboard" class="dashboard">
-        <!-- <table id="engineer" class="engineer">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>City</th>
-              <th>Maker</th>
-              <th>Model</th>
-              <th>Year</th>
-              <th>Email</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Tiger Nixon</td>
-              <td>System Architect</td>
-              <td>Edinburgh</td>
-              <td>61</td>
-              <td>2011/04/25</td>
-              <td>$320,800</td>
-            </tr>
-          </tbody>
-        </table> -->
+
+      <!-- panel -->
+      <div id="panel" class="layer-1">
+        <div id="show" class="show">
+          <select>
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </div>
+        <div id="search" class="search">
+          <input type="text" placeholder="search">
+        </div>
       </div>
+
+      <!-- table -->
+      <div id="dashboard" class="layer-2">
+      </div>
+      
+      <!-- paging -->
+      <div id="paging" class="layer-3"></div>
      </div>
+
   </body>
   <script src="../app/libs/http/ajax.js"></script>
+  <script src="../app/libs/datatable/pagination/Pagination.js"></script>
   <script src="../app/libs/datatable/core/core.js"></script>
   <script src="../app/dashboard/dashboard.js"></script>
 </html>
