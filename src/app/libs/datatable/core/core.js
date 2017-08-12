@@ -27,8 +27,8 @@ Datatable.prototype.init = function () {
   var ttTable
       targetEl = document.querySelector(this.opts.selector)
   ttTable = document.createElement('div')
-  ttTable.setAttribute('id','ttTable')
-  ttTable.setAttribute('class','tt-layer-2')
+  ttTable.setAttribute('id', 'ttTable')
+  ttTable.setAttribute('class', 'tt-layer-2')
   targetEl.appendChild(ttTable)
 
   // to create a tt table
@@ -64,17 +64,22 @@ Datatable.prototype.renderSearch = function () {
 
   // to crate div.search
   div_search = document.createElement('div')
-  div_search.setAttribute('id','ttSearch')
-  div_search.setAttribute('class','tt-search')
+  div_search.setAttribute('id', 'ttSearch')
+  div_search.setAttribute('class', 'tt-search')
   
   // to create input#search
   input = document.createElement('input')
-  input.setAttribute('type','text')
-  input.setAttribute('placeholder','search')
+  input.setAttribute('type', 'text')
+  input.setAttribute('placeholder', 'search')
 
   // to append
   div_search.appendChild(input)
   targetEl.appendChild(div_search)
+
+  // to add events
+  input.addEventListener('', function () {
+
+  })
 
 }
 
@@ -82,19 +87,20 @@ Datatable.prototype.renderSearch = function () {
 Datatable.prototype.renderSelect = function () {
 
   // variables
-  var options = [10,25,50,100],
+  var $this = this,
+      options = [10,25,50,100],
       div_panel, div_show, select,
       targetEl = document.querySelector(this.opts.selector)
 
   // to create div#panel.layer-1
   div_panel = document.createElement('div')
-  div_panel.setAttribute('id','ttPanel')
-  div_panel.setAttribute('class','tt-layer-1')
+  div_panel.setAttribute('id', 'ttPanel')
+  div_panel.setAttribute('class', 'tt-layer-1')
 
   // to create div.show
   div_show = document.createElement('div')
-  div_show.setAttribute('id','ttShow')
-  div_show.setAttribute('class','tt-show')
+  div_show.setAttribute('id', 'ttShow')
+  div_show.setAttribute('class', 'tt-show')
 
   // to create select#show
   select = document.createElement('select')
@@ -113,21 +119,34 @@ Datatable.prototype.renderSelect = function () {
   div_show.appendChild(select)
   targetEl.appendChild(div_panel)
 
+  // to add events
+  select.addEventListener('change', function (e) {
+    $this.renderContent()
+  })
 }
 
 // responsive
 Datatable.prototype.renderContent = function (start, end) {
   
+  var $this = this, 
+      show, showNumber, search, serachWord
+      tbody = document.querySelector('.tt-tbody')
+  
   // to check condition
-  var show, 
-      showNumber, search, serachWord
   show = document.querySelector('#ttShow')
   showNumber = show.firstChild.value
   search = document.querySelector('#ttSearch')
-  serachWord = search.firstChild.value
+  searchWord = search.firstChild.value
+  searchWordBlankDeleted = searchWord.replace(/ /gi, '')
+
+  if (searchWordBlankDeleted.length > 0) {
+    this.searchWord
+  }
+  
+  // to clear first
+  tbody.innerHTML = ''
 
   // to draw content
-  var tbody = document.querySelector('.tt-tbody')
   //row
   var size = showNumber
   for(var i = 0; i < size; i++){
@@ -143,11 +162,5 @@ Datatable.prototype.renderContent = function (start, end) {
   if (this.opts.pagination) {
     new Pagination()
   }
-
-}
-
-
-// Datatable.prototype.pagination = function () {}
-Datatable.prototype.edit = function () {
 
 }
