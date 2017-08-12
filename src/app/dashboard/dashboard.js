@@ -4,9 +4,9 @@
     new Datatable({
       selector: '#carTable',
       style: 'basic',
-      show: true,
-      sort: true,
-      search: true,
+      // show: true,
+      // sort: true,
+      // search: true,
       pagination: true,
       responsive: true,
       editable: true,

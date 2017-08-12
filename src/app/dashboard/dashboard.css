@@ -1,3 +1,58 @@
-/* .engineer {
+
+.tt-table {
   width: 100%;
-} */
+}
+
+.tt-tbody {
+  font-weight: 200
+}
+.tt-tbody td {
+  border: 1px solid black;
+}
+
+.sorting {
+  background-image: url(../static/images/sort_both.png);
+  cursor: pointer;
+  background-position: center right;
+  background-repeat: no-repeat;
+}
+.sorting-asc {
+  background-image: url(../static/images/sort_asc.png);
+}
+.sorting-desc {
+  background-image: url(../static/images/sort_desc.png);
+}
+
+.tt-pagination {
+  float: right;
+  margin-top: 12px;
+  margin-right: 10px;
+}
+.tt-pagination div{
+  display: inline-block;
+  font-size: 16px;
+}
+.tt-pagination>:nth-child(1) {
+  font-weight: 100;
+  cursor: pointer;
+}
+.tt-pagination>:nth-child(3) {
+  font-weight: 100;
+  cursor: pointer;
+}
+.tt-pagination :nth-child(2) span {
+  box-sizing: border-box;
+  display: inline-block;
+  min-width: 1.5em;
+  margin-left: 2px;
+  text-align: center;
+  text-decoration: none !important;
+  cursor: pointer;
+  color: #333 !important;
+  /* border-radius: 2px;  */
+  padding: 0.5em 1em;
+  font-size: 12px;
+}
+.tt-pagination :nth-child(2) span.selected {
+  border-bottom: 1px solid #979797;
+}
