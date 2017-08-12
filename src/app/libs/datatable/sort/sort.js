@@ -1,4 +1,4 @@
-var Sort = function (opts) {
+var Sort = function (options) {
   this.opts = {
 
   }

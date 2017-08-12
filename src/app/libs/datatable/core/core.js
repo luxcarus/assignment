@@ -16,6 +16,17 @@ var Datatable = function (options) {
 // init
 Datatable.prototype.init = function () {
 
+  // if (this.opts.show) {
+  //   var s = new Show()
+  //   s.init()
+  //   s.attachShow()
+  // }
+  // if (this.opts.search) {
+  //   var s = new Search()
+  //   s.init()
+  //   s.attachSearch()
+  // }
+
   if (this.opts.show) {
     this.renderSelect()
   }

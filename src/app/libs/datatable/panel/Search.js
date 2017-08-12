@@ -1,13 +1,10 @@
-function Search () {
-  this.opts = {
+function Search () {}
+Search.prototype = new Panel()
+Search.prototype.attachSearch = function () {
 
-  }
-}
-Search.prototype.init = function () {
-  
     // variables
-    var div_search, input,
-        targetEl = document.querySelector('#ttPanel')
+    var div_search, input
+        targetEl = document.getElementById(this.targetId)
   
     // to crate div.search
     div_search = document.createElement('div')
@@ -21,6 +18,8 @@ Search.prototype.init = function () {
   
     // to append
     div_search.appendChild(input)
+    // targetEl.appendChild(div_search)
+    
     targetEl.appendChild(div_search)
   
     // to add events
