@@ -17,7 +17,6 @@ var Datatable = function (options) {
     reqPage : null,
     start : null,
     end : null,
-    data : null,
     sortBy: null
   }
   Object.assign(this.opts,options)
@@ -50,9 +49,8 @@ Datatable.prototype.createContainer = function (name) {
 Datatable.prototype.init = function () {
 
   this.rt.targetEl = document.querySelector(this.opts.selector)
-  //this.pagination = new Pagination()
 
-  /* layer-1 ... [Show, Search] */
+  /* layer-1 : [Show, Search] */
   var layer1, panel, select, search
   layer1 = this.createLayer(1)
   panel = this.createContainer('Panel')
@@ -64,7 +62,7 @@ Datatable.prototype.init = function () {
   panel.appendChild(select)
   panel.appendChild(search)
   
-  /* layer-2 ... [Table] */
+  /* layer-2 : [Table] */
   var layer2, content, table
   layer2 = this.createLayer(2)
   content = this.createContainer('Content')
@@ -72,7 +70,7 @@ Datatable.prototype.init = function () {
   layer2.appendChild(content)
   content.appendChild(table)
   
-  /* layer-3 ... [Pagination] */
+  /* layer-3 : [Pagination] */
   layer3 = this.createLayer(3)
   paging = this.createContainer('Paging')
   layer3.appendChild(paging)
@@ -153,7 +151,8 @@ Datatable.prototype.createSearch = function () {
 /* Table Component */
 Datatable.prototype.createTable = function () {
 
-  var tbl, thead, tbody, trInThead
+  var $this = this,
+      tbl, thead, tbody, trInThead
 
   /* table */
   tbl  = document.createElement('table')
@@ -174,8 +173,6 @@ Datatable.prototype.createTable = function () {
     th.setAttribute('class','sorting')
     if (i === 0) {
       th.classList.add('sorting-asc')
-    } else {
-      // th.classList.add('sorting-both')
     }
     th.setAttribute('tt-label',keys[i])
     if (keys[i] !== 'ttIndex') {
@@ -184,31 +181,30 @@ Datatable.prototype.createTable = function () {
     }
   }
 
-  // to add event(s) on <th> //sorting
+  /* to add event(s) on <th> */
   function setClickEvent (i) {
     thead.firstChild.childNodes[i].addEventListener('click', function (e) {
-      console.log(e.target.getAttribute('tt-label'))
-
-      var t = e.target
-      var columnName = t.getAttribute('tt-label')
-      var isDesc = t.className.indexOf('sorting-desc') > -1
-
-      // 모두 clear
-      if (isDesc) {
-        // asc()
-        // set class asc
-        // draw
-      } else {
-        // desc()
-        // set class desc
-        // draw
+      var t = e.target,
+          name = t.getAttribute('tt-label').toLowerCase(),
+          isAsc = t.className.indexOf('sorting-asc') > -1
+      /* to reset */
+      var size = t.parentNode.children.length
+      for (var i = 0; i < size; i++) {
+        t.parentNode.childNodes[i].classList.remove('sorting-desc')
+        t.parentNode.childNodes[i].classList.remove('sorting-asc')
       }
-
-      // var isAsc = e.target.getAttribute('class').indexOf('asc')
-      // if (isAsc > 0) {
-        e.target.classList.toggle('sorting-asc')
-        // e.target.classList.toggle('sorting-desc')
-      // }
+      /* to set */
+      if (isAsc) {
+        $this.rt.sortBy = {by: 'desc', name}
+        t.classList.add('sorting-desc')
+      } else {
+        $this.rt.sortBy = {by: 'asc', name}
+        t.classList.add('sorting-asc')
+      }
+      $this.rt.reqPage = null
+      $this.rt.start = null
+      $this.rt.end = null
+      $this.renderContent()
     })
   }
   var size = thead.firstChild.childNodes.length
@@ -220,7 +216,6 @@ Datatable.prototype.createTable = function () {
 }
 
 // responsive
-// Datatable.prototype.renderContent = function (reqPage, start, end, sortBy) {
 Datatable.prototype.renderContent = function () {
   
   var $this = this, 
@@ -256,9 +251,10 @@ Datatable.prototype.renderContent = function () {
 
   // to init-sorting
   if (sortBy.by === 'asc') {
-    data.sort(this.sortAsc(name))
-  } // ...
-  
+    data.sort(this.sortAsc(sortBy.name))
+  } else {
+    data.sort(this.sortDesc(sortBy.name))
+  }
 
   //row
   var size = end
@@ -267,7 +263,7 @@ Datatable.prototype.renderContent = function () {
       break
     }
     var tr = tbody.insertRow()
-    tr.setAttribute('data-index', data[i].ttIndex)
+    tr.dataset['index'] = data[i].ttIndex
     for (var key in data[i]) {
       if (key !== 'ttIndex') {
         var value = data[i][key]
@@ -278,15 +274,13 @@ Datatable.prototype.renderContent = function () {
   }
 
   /* to render pagination */
-  // var paginatation = this.pagination(data.length, showNumber, reqPage)
   this.rt.total = data.length
   this.rt.showNumber = showNumber
   this.rt.reqPage = reqPage
   var paginatation = this.pagination()
   document.querySelector('.tt-paging').appendChild(paginatation)
 
-  // to add events
-  // for editing
+  // to add event(s) for editing
   function setEventToEdit () {
     tbody.children[i].children[j].addEventListener('dblclick', function (e) {
       
@@ -300,9 +294,10 @@ Datatable.prototype.renderContent = function () {
       })
       input.addEventListener('change', function (e) {
         var index = e.target.parentNode.parentNode.dataset.index
-        console.log(index)
-        // ** to change this.cdata
-        debugger
+        var targetData = $this.opts.data[index]
+        var keys = Object.keys($this.opts.data[index])
+        var columnName = keys[e.target.parentNode.cellIndex]
+        $this.opts.data[index][columnName] = e.target.value
         td.innerText = e.target.value
       })
       input.addEventListener('keydown', function (e) {
@@ -312,7 +307,6 @@ Datatable.prototype.renderContent = function () {
           e.target.dispatchEvent(evt);
         }
       })
-      
       td.innerText = ''
       td.appendChild(input)
       input.focus()
@@ -328,7 +322,6 @@ Datatable.prototype.renderContent = function () {
 
 }
 
-// Datatable.prototype.pagination = function (total, show, reqPage) {
 Datatable.prototype.pagination = function () {
 
   // show = Number(show)
@@ -376,9 +369,6 @@ Datatable.prototype.pagination = function () {
       if (tested.className === 'current') {
         var reqPage = Number(tested.textContent)
         if (reqPage > 1) {
-          // var start = getStart(reqPage - 1, show)
-          // var end = getEnd(start, show)
-          // $this.renderContent(reqPage - 1, start, end)
           $this.rt.reqPage = reqPage - 1
           $this.rt.start = getStart(reqPage - 1, show)
           $this.rt.end = getEnd($this.rt.start, show)
@@ -397,9 +387,6 @@ Datatable.prototype.pagination = function () {
       if (tested.className === 'current') {
         var reqPage = Number(tested.textContent)
         if (reqPage < size) {
-          // var start = getStart(reqPage + 1, show)
-          // var end = getEnd(start, show)
-          // $this.renderContent(reqPage + 1, start, end)
           $this.rt.reqPage = reqPage + 1
           $this.rt.start = getStart(reqPage + 1, show)
           $this.rt.end = getEnd($this.rt.start, show)          
@@ -420,10 +407,6 @@ Datatable.prototype.pagination = function () {
     }
     /** to add event on buttons */
     span.addEventListener('click', function (e) {
-      // var reqPage = Number(e.target.textContent)
-      // var start = getStart(reqPage, show)
-      // var end = getEnd(start, show)
-      // $this.renderContent(reqPage, start, end)
       var reqPage = Number(e.target.textContent)
       $this.rt.reqPage =  reqPage
       $this.rt.start = getStart(reqPage, show)

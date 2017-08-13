@@ -1,8 +1,9 @@
 var Pagination = function (options) {
-  this.opts = {
-  }
-  Object.assign(this.opts,options)
+  // this.opts = {
+  // }
+  // Object.assign(this.opts,options)
 }
+Pagination.prototype = new Datatable
 Pagination.prototype.pagination = function (total, show, reqPage) {
 
   show = Number(show)
