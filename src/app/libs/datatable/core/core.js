@@ -50,16 +50,6 @@ Datatable.prototype.init = function () {
   this.rt.targetEl = document.querySelector(this.opts.selector)
   this.rt.targetEl.classList.add(this.opts.style)
 
-  /*
-  window.addEventListener('resize', function (e) {
-    console.log(window.innerWidth)
-    var w = window.innerWidth
-    if (w > 600 && w < 767) {
-    } else if (w > 480 && w < 659) {
-    }
-  })
-  */
-
   /* layer-1 : [Show, Search] */
   var layer1, panel, select, search
   layer1 = this.createLayer(1)

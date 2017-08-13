@@ -12,8 +12,6 @@
   - if dataset is less than or equal to 100 rows, then pull data from the client side (stored data)
   - if dataset is greater than 100, then pull via API/service
 
-
-
 ## Functionality Implemented
 1. Sorting
   - implemented
@@ -22,7 +20,7 @@
   - implemented
 
 3. Show/hide columns
-  - ing...
+  - no
 
 4. Search
   - implemented
@@ -39,3 +37,7 @@
 7. Build logic that will help with performance
   - basic Ajax only
   - I have emailed to ask about this for two times, but I have not received reply.
+
+## To Run
+1. On Mac, open your chrome by running below command on Terminal (due to cross-origin)
+  - open /Applications/Google\ Chrome.app --args --disable-web-security --user-data-dir
