@@ -13,7 +13,7 @@ var Datatable = function (options) {
     var size = this.opts.data.length
     for (var i = 0; i < size; i++) {
       this.opts.cData.push(this.opts.data[i])
-      this.opts.cData[i].index = i
+      this.opts.cData[i].ttIndex = i
     }
   }
 }
@@ -21,8 +21,8 @@ var Datatable = function (options) {
 // init
 Datatable.prototype.init = function () {
 
-  this.renderSelect()
-  this.renderSearch()
+  this.initSelect()
+  this.initSearch()
 
   // to create table-foundation
   var ttTable
@@ -56,7 +56,10 @@ Datatable.prototype.init = function () {
   }
   ttTable.appendChild(tbl)
 
-  // to add click event on <th>
+
+
+
+  // to add click event on <th> //sorting
   function setClickEvent (i) {
     thead.firstChild.childNodes[i].addEventListener('click', function (e) {
       console.log(e.target.getAttribute('tt-label'))
@@ -77,7 +80,7 @@ Datatable.prototype.init = function () {
 }
 
 // search
-Datatable.prototype.renderSearch = function () {
+Datatable.prototype.initSearch = function () {
   // variables
   var $this = this, div_search, input,
       targetEl = document.querySelector('#ttPanel')
@@ -103,7 +106,7 @@ Datatable.prototype.renderSearch = function () {
 }
 
 // select
-Datatable.prototype.renderSelect = function () {
+Datatable.prototype.initSelect = function () {
 
   // variables
   var $this = this,
@@ -145,61 +148,80 @@ Datatable.prototype.renderSelect = function () {
 }
 
 // responsive
-Datatable.prototype.renderContent = function (start, end) {
-  
+Datatable.prototype.renderContent = function (reqPage, start, end) {
+
+  console.log('rc')
+    
   var $this = this, 
       show, showNumber, search, serachWord,
       tbody = document.querySelector('.tt-tbody')
-  
-  // to check condition
-  show = document.querySelector('#ttShow')
-  showNumber = show.firstChild.value
-  search = document.querySelector('#ttSearch')
-  searchWord = search.firstChild.value
-  searchWordBlankDeleted = searchWord.replace(/ /gi, '')
+ 
+    
+    // for checking condition
+    show = document.querySelector('#ttShow')
+    showNumber = Number(show.firstChild.value)
+    search = document.querySelector('#ttSearch')
+    searchWord = search.firstChild.value
+    searchWordBlankDeleted = searchWord.replace(/ /gi, '')
 
-  // to get searched-data only
-  var data = this.opts.data
+    if (!reqPage) reqPage = 1
+    if (!start) start = 0
+    if (!end) end = showNumber - 1
+
+  var data = this.opts.cData
   if (searchWordBlankDeleted.length > 0) {
     data = this.searchWord(searchWord)
   }
 
-  // to init-sorting
+  // to init-sorting // 자리 .. 
   var ths = document.querySelectorAll('.sorting')
   ths[0].classList.add('sorting-asc')
   var name = ths[0].getAttribute('tt-label')
   data.sort(this.sortAsc(name))
-  
   // to clear first
   tbody.innerHTML = ''
 
+  // debugger
   // to draw content
   //row
-  var size = showNumber
-  for(var i = 0; i < size; i++){
+  // var size = showNumber
+  // for(var i = 0; i < size; i++){
+  var size = end
+  for(var i = start; i < size; i++){
+    if (i >= data.length) {
+      break
+    }
     var tr = tbody.insertRow()
+    tr.setAttribute('data-index', data[i].ttIndex)
     for (var key in data[i]) {
       var value = data[i][key]
       var td = tr.insertCell()
-      td.appendChild(document.createTextNode(value))
-      // td.style.border = '1px solid black'
+      td.innerText = value
     }
   }
 
-  var pagination = this.pagination(this.opts.data.length, showNumber)
+  var pagination = this.pagination(data.length, showNumber, reqPage)
   document.querySelector(this.opts.selector).appendChild(pagination)
 
 
-  // to add event
+
+  // to add events
+  // for editing
   function setEventToEdit () {
     tbody.children[i].children[j].addEventListener('dblclick', function (e) {
+      var tr = e.target,
+          input = document.createElement('input')
 
-      var tr = e.target
-      var input = document.createElement('input')
+      // foucsout event 걸어주기
+
 
       input.setAttribute('value',tr.textContent)
       input.addEventListener('change', function (e) {
-        debugger
+        var index = e.target.parentNode.parentNode.dataset.index
+
+        console.log(index)
+        // to change data 
+
         tr.innerText = e.target.value
       })
       tr.innerText = ''
@@ -216,12 +238,20 @@ Datatable.prototype.renderContent = function (start, end) {
 
 }
 
-Datatable.prototype.pagination = function (total, show) {
+// search 할 때 paging 해야함
 
-  var page = Math.ceil(total / show),
-      start = (page * show) - show,
-      end = start - (show - 1),
-      end = end > 0 ? end : end *  -1
+Datatable.prototype.pagination = function (total, show, reqPage) {
+
+  show = Number(show)
+
+  var $this = this,
+      pages = Math.ceil(total / show),
+      start = (reqPage * show) - show,
+      end = start + show - 1
+      // end = start - (show - 1),
+      // end = end > 0 ? end : end * -1
+
+// debugger
 
   var base = document.getElementById('ttPagination'), 
       prev, prevInner, btns, next, nextInner, span
@@ -243,12 +273,21 @@ Datatable.prototype.pagination = function (total, show) {
   nextInner = document.createElement('div')
   nextInner.innerText = 'Next'
 
+  //  버튼 이벤트가 원활하지 않음
+
   // to create paging buttons
   btns = document.createElement('div')
   // var size = page.length
-  for (var i = 0; i < page; i++) {
+  for (var i = 0; i < pages; i++) {
     span = document.createElement("span")
     span.innerText = i+1
+
+    //
+    span.addEventListener('click', function (e) {
+      console.log(e.target.textContent)
+      $this.renderContent(Number(e.target.textContent), start, end)
+    })
+
     btns.appendChild(span)
   }
   
@@ -263,17 +302,22 @@ Datatable.prototype.pagination = function (total, show) {
 
 
 Datatable.prototype.searchWord = function (searchWord) {
-  var dataFitered = []
-  var size = this.opts.data.length, result = null
+  var dataFiltered = [], keys, result, sizee
+  var size = this.opts.cData.length
   for (var i = 0; i < size; i++) {
-    for (var key in this.opts.data[i]) {
-      result = (this.opts.data[i][key]+'').search(searchWord)
+    if (!keys) {
+      keys = Object.keys(this.opts.cData[i])
+    }
+    sizee = keys.length
+    for (var j = 0; j < sizee; j++) {
+      result = (this.opts.cData[i][keys[j]]+'').search(searchWord)
       if (result > -1) {
-        dataFitered.push(this.opts.data[i])
+        dataFiltered.push(this.opts.cData[i])
+        break
       }
     }
   }
-  return dataFitered
+  return dataFiltered
 }
 
 Datatable.prototype.sortAsc = function (key) {
