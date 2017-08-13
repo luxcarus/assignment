@@ -8,7 +8,6 @@ var Datatable = function (options) {
     data: null,
     cData: []
   }
-  // this.pagination = null
   this.rt = {
     targetEl : null,
     showNumber : null,
@@ -49,6 +48,17 @@ Datatable.prototype.createContainer = function (name) {
 Datatable.prototype.init = function () {
 
   this.rt.targetEl = document.querySelector(this.opts.selector)
+  this.rt.targetEl.classList.add(this.opts.style)
+
+  /*
+  window.addEventListener('resize', function (e) {
+    console.log(window.innerWidth)
+    var w = window.innerWidth
+    if (w > 600 && w < 767) {
+    } else if (w > 480 && w < 659) {
+    }
+  })
+  */
 
   /* layer-1 : [Show, Search] */
   var layer1, panel, select, search
@@ -60,7 +70,7 @@ Datatable.prototype.init = function () {
   search = this.createSearch()
   layer1.appendChild(panel)
   panel.appendChild(select)
-  panel.appendChild(search)
+  if (this.opts.search) panel.appendChild(search)
   
   /* layer-2 : [Table] */
   var layer2, content, table
@@ -171,6 +181,8 @@ Datatable.prototype.createTable = function () {
   for (var i = 0; i < size; i++) {
     var th = document.createElement('th')
     th.setAttribute('class','sorting')
+    //&&
+    th.classList.add('col_'+(size-(i+1)))
     if (i === 0) {
       th.classList.add('sorting-asc')
     }
@@ -227,7 +239,7 @@ Datatable.prototype.renderContent = function () {
       end = this.rt.end, 
       sortBy = this.rt.sortBy
       
-  // to clear first
+  /* to clear first */
   tbody.innerHTML = ''
 
   /* for checking condition */
@@ -264,11 +276,16 @@ Datatable.prototype.renderContent = function () {
     }
     var tr = tbody.insertRow()
     tr.dataset['index'] = data[i].ttIndex
+    //cell
+    var j = Object.keys(data[0]).length - 1
     for (var key in data[i]) {
       if (key !== 'ttIndex') {
         var value = data[i][key]
         var td = tr.insertCell()
         td.innerText = value
+        //&&
+        td.classList.add('col_'+j)
+        j--
       }
     }
   }
@@ -281,50 +298,51 @@ Datatable.prototype.renderContent = function () {
   document.querySelector('.tt-paging').appendChild(paginatation)
 
   // to add event(s) for editing
-  function setEventToEdit () {
-    tbody.children[i].children[j].addEventListener('dblclick', function (e) {
-      
-      var td = e.target
-      var input = document.createElement('input')
-      input.setAttribute('value',td.textContent)
-      
-      input.addEventListener('focusout', function (e) {
+  if (this.opts.edit) {
+    function setEventToEdit () {
+      tbody.children[i].children[j].addEventListener('dblclick', function (e) {
+        
+        var td = e.target
+        var input = document.createElement('input')
+        input.setAttribute('value',td.textContent)
+        
+        input.addEventListener('focusout', function (e) {
+          td.innerText = ''
+          td.appendChild(document.createTextNode(e.target.value))
+        })
+        input.addEventListener('change', function (e) {
+          var index = e.target.parentNode.parentNode.dataset.index
+          var targetData = $this.opts.data[index]
+          var keys = Object.keys($this.opts.data[index])
+          var columnName = keys[e.target.parentNode.cellIndex]
+          $this.opts.data[index][columnName] = e.target.value
+          td.innerText = e.target.value
+        })
+        input.addEventListener('keydown', function (e) {
+          if (e.which === 13 || e.which ===27) {
+            var evt = document.createEvent("HTMLEvents");
+            evt.initEvent("focusout", false, true);
+            e.target.dispatchEvent(evt);
+          }
+        })
         td.innerText = ''
-        td.appendChild(document.createTextNode(e.target.value))
+        td.appendChild(input)
+        input.focus()
       })
-      input.addEventListener('change', function (e) {
-        var index = e.target.parentNode.parentNode.dataset.index
-        var targetData = $this.opts.data[index]
-        var keys = Object.keys($this.opts.data[index])
-        var columnName = keys[e.target.parentNode.cellIndex]
-        $this.opts.data[index][columnName] = e.target.value
-        td.innerText = e.target.value
-      })
-      input.addEventListener('keydown', function (e) {
-        if (e.which === 13 || e.which ===27) {
-          var evt = document.createEvent("HTMLEvents");
-          evt.initEvent("focusout", false, true);
-          e.target.dispatchEvent(evt);
-        }
-      })
-      td.innerText = ''
-      td.appendChild(input)
-      input.focus()
-    })
-  }
-  var size = tbody.children.length
-  for (var i = 0; i < size; i++) {
-    var sizee = tbody.children[i].children.length
-    for (var j = 0; j < sizee; j++) {
-      setEventToEdit(i, j)
+    }
+    var size = tbody.children.length
+    for (var i = 0; i < size; i++) {
+      var sizee = tbody.children[i].children.length
+      for (var j = 0; j < sizee; j++) {
+        setEventToEdit(i, j)
+      }
     }
   }
-
 }
 
+/* Pagination Component */
 Datatable.prototype.pagination = function () {
 
-  // show = Number(show)
   var $this = this,
       show = Number(this.rt.showNumber),
       reqPage = this.rt.reqPage || 1,
@@ -345,7 +363,6 @@ Datatable.prototype.pagination = function () {
   /* to create base */
   if (base) {
     base.innerHTML = ''
-    // debugger
   } else {
     base = document.createElement('div')
     base.setAttribute('id','ttPagination')

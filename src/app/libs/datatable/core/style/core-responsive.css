@@ -1,0 +1,48 @@
+/* #Tablet (Portrait)
+================================================== */
+/* Note: Design for a width of 768px */
+@media all and (max-width: 768px) {
+  .col_1{
+      display:none;
+      width:0;
+      height:0;
+      opacity:0;
+      visibility: collapse;       
+  } 
+}
+/* #Mobile (Landscape)
+================================================== */
+/* Note: Design for a width of 600px */
+@media all and (max-width: 600px) {
+  .col_2{
+      display:none;
+      width:0;
+      height:0;
+      opacity:0;
+      visibility: collapse;
+  } 
+}
+/* #Mobile (Landscape)
+================================================== */
+/* Note: Design for a width of 480px */
+@media all and (max-width: 480px) {
+  .col_3{
+      display:none;
+      width:0;
+      height:0;
+      opacity:0;
+      visibility: collapse;
+  } 
+}
+/*  #Mobile (Portrait)
+================================================== */
+/* Note: Design for a width of 320px */
+@media all and (max-width: 320px) {
+  .col_4{
+      display:none;
+      width:0;
+      height:0;
+      opacity:0;
+      visibility: collapse;
+  }    
+}

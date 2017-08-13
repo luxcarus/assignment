@@ -3,22 +3,16 @@
   function callback (data) {
     new Datatable({
       selector: '#carTable',
-      style: 'basic',
-      // show: true,
-      // sort: true,
-      // search: true,
-      pagination: true,
+      style: 'basic', /* basic or summer */
+      search: true,
       responsive: true,
-      editable: true,
+      edit: true,
       data: data
     }).init()
   }
 
   window.onload = function () {
     console.log('onload')
-
-    // to get selector
-    var dashboard = document.querySelector('#dashboard')
 
     // to select data
     var ajax = new Ajax({
@@ -34,7 +28,6 @@
       }
     })
     ajax.request()
-
   }
 
 })(window)
