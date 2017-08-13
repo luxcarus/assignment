@@ -1,7 +1,7 @@
 
 # Assignment
 
-## Key Functionality
+## Key Functionality (to be implemented)
 1. Sorting
 2. Pagination
 3. Show/hide columns
@@ -27,7 +27,7 @@
 
 5. Ability to edit/save any of the cells
   - implemented
-  - How to
+  - How to Test
     - to double-click on the cell
     - to press esc or enter to escape
 
@@ -36,8 +36,8 @@
 
 7. Build logic that will help with performance
   - basic Ajax only
-  - I have emailed to ask about this for two times, but I have not received reply.
+  - I have emailed to ask about this for two times, but I have not received any reply.
 
-## To Run
-1. On Mac, open your chrome by running below command on Terminal (due to cross-origin)
+## How To Run Application
+1. On Mac, open your chrome by running below command on Terminal (to avoid cross-origin)
   - open /Applications/Google\ Chrome.app --args --disable-web-security --user-data-dir
